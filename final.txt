@@ -1,0 +1,267 @@
+Imports Microsoft.Win32
+
+Public Class Form1
+    Public listCustomer As New List(Of Customer)
+    Public customerCurrentUser As Customer
+
+    Public Sub New()
+        InitializeComponent()
+        Dim cust1 As New Customer("Jose", "1234", 18, New DateTime(2003, 12, 1), "Male", "Gyattown",
+                                 "Wedding", 100, New DateTime(2025, 12, 1))
+        Dim cust2 As New Customer("Juana", "abcd", 18, New DateTime(2002, 12, 1), "Female", "Skibidi",
+                                 "Birthday", 300, New DateTime(2024, 12, 1))
+        Dim cust3 As New Customer("Me", "aguy", 18, New DateTime(2001, 12, 1), "Male", "Ohio",
+                                 "Wedding", 200, New DateTime(2025, 12, 5))
+
+        cust1.SetServices(New List(Of String) From {"Catering", "Videoke"})
+        cust2.SetServices(New List(Of String) From {"Clown", "Singer"})
+        cust3.SetServices(New List(Of String) From {"Catering", "Dancer", "Videoke"})
+        listCustomer.Add(cust1)
+        listCustomer.Add(cust2)
+        listCustomer.Add(cust3)
+    End Sub
+
+    Class Customer
+        Private services As New List(Of String)
+        Private strName As String
+        Private strPass As String
+        Private dblAgeNo As String
+        Private strSex As String
+        Private strAddress As String
+        Private dtpBirthday As DateTime
+
+        'Event stuff
+        Private strType As String
+        Private dblNoGuests As String
+        Private dtpEventDate As DateTime
+        Public Sub New(ByVal strTempName As String, ByVal strTempPass As String, ByVal Age As String, ByVal BirthdayDate As DateTime, ByVal Sex As String, ByVal Address As String,
+                       ByVal Type As String, ByVal NoGuests As String, ByVal EventDate As DateTime)
+            strName = strTempName
+            strPass = strTempPass
+            dblAgeNo = Age
+            dtpBirthday = BirthdayDate
+            strSex = Sex
+            strAddress = Address
+
+            'Event Stuff
+            strType = Type
+            dblNoGuests = NoGuests
+            dtpEventDate = EventDate
+
+        End Sub
+        Public Sub New()
+
+        End Sub
+
+        'test
+        Public Sub SetServices(selectedServices As List(Of String))
+            services = selectedServices
+        End Sub
+
+        Public Function GetServices() As List(Of String)
+            Return services
+        End Function
+
+        Public Sub SetUserCredentials(ByVal strTempName As String, ByVal strTempPass As String)
+            strName = strTempName
+            strPass = strTempPass
+        End Sub
+        Public Sub SetInfo(ByVal Age As String, ByVal Sex As String, ByVal Address As String)
+            dblAgeNo = Age
+            strSex = Sex
+            strAddress = Address
+        End Sub
+        'event stuff
+        Public Sub SetEventInfo(ByVal Type As String, ByVal NoGuests As String)
+            strType = Type
+            dblNoGuests = NoGuests
+        End Sub
+
+        'event stuff
+        Public Sub SetEventDate(ByVal EventDate As DateTime)
+            dtpEventDate = EventDate
+        End Sub
+        Public Sub SetBirthDate(ByVal BirthdayDate As DateTime)
+            dtpBirthday = BirthdayDate
+        End Sub
+
+
+
+        Public Function GetName() As String
+
+            Return strName
+        End Function
+        Public Function GetPass() As String
+
+            Return strPass
+        End Function
+
+        Public Function GetInfo() As Array
+            Dim arrayInfo(3) As String
+            arrayInfo(0) = dblAgeNo
+            arrayInfo(1) = strSex
+            arrayInfo(2) = strAddress
+            Return arrayInfo
+        End Function
+        'event stuff
+        Public Function GetEventInfo() As Array
+            Dim arrayEventInfo(2) As String
+            arrayEventInfo(0) = strType
+            arrayEventInfo(1) = dblNoGuests
+            Return arrayEventInfo
+        End Function
+        'event stuff
+        Public Function GetEventDate() As DateTime
+            Return dtpEventDate
+        End Function
+        Public Function GetBirthDate() As DateTime
+            Return dtpBirthday
+
+        End Function
+    End Class
+
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim intCounter = 0
+        Do While intCounter < listCustomer.Count
+            If TextBox1.Text = listCustomer(intCounter).GetName() And TextBox2.Text = listCustomer(intCounter).GetPass() Then
+                MsgBox("Log-in Success")
+
+                Form2.Show()
+                Me.Hide()
+                customerCurrentUser = listCustomer(intCounter)
+            End If
+            intCounter += 1
+        Loop
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Form3.ShowDialog()
+    End Sub
+End Class
+
+Public Class Form2
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        Dim tempInfo() As String = Form1.customerCurrentUser.GetInfo
+        Dim tempEventInfo() As String = Form1.customerCurrentUser.GetEventInfo
+        Dim selectedServices As List(Of String) = Form1.customerCurrentUser.GetServices()
+        Label8.Text = Form1.customerCurrentUser.GetName
+        Label5.Text = tempInfo(0)
+        Label6.Text = tempInfo(1)
+        Label7.Text = tempInfo(2)
+        Label9.Text = Form1.customerCurrentUser.GetBirthDate().ToShortDateString()
+        Label14.Text = Form1.customerCurrentUser.GetEventDate().ToShortDateString()
+
+        'event stuff
+        Label11.Text = tempEventInfo(0)
+        Label12.Text = tempEventInfo(1)
+        Label13.Text = String.Join(", ", selectedServices)
+        Label13.Visible = True
+
+        Label9.Visible = True
+        Label8.Visible = True
+        Label5.Visible = True
+        Label6.Visible = True
+        Label7.Visible = True
+
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Form1.Show()
+        Me.Close()
+    End Sub
+End Class
+
+Public Class Form3
+    Private Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+
+        Dim pricePerDay As Double = 10000
+        Dim totalPrice As Double = 0
+        totalPrice += pricePerDay
+        'THing
+        Dim selectedServices As New List(Of String)
+        If chkCatering.Checked Then
+            selectedServices.Add("Catering")
+            totalPrice += 20000 ' Catering cost
+        End If
+
+        If chkClown.Checked Then
+            selectedServices.Add("Clown")
+            totalPrice += 10000 ' Clown cost
+        End If
+
+        If chkSinger.Checked Then
+            selectedServices.Add("Singer")
+            totalPrice += 7000 ' Singer cost
+        End If
+
+        If chkDancer.Checked Then
+            selectedServices.Add("Dancer")
+            totalPrice += 7000 ' Dancer cost
+        End If
+
+        If chkVideoke.Checked Then
+            selectedServices.Add("Videoke")
+            totalPrice += 1000 ' Videoke cost
+        End If
+        Dim noOfGuests As Double
+        If Double.TryParse(TextBox4.Text, noOfGuests) Then
+            Dim multiplierfr As Double = Math.Ceiling(noOfGuests / 50)
+            totalPrice *= multiplierfr
+
+        End If
+
+
+        Dim selectedDateBday As DateTime = DateTimePicker1.Value
+        Dim selectedDateEventDate As DateTime = DateTimePicker2.Value
+        For Each student As Form1.Customer In Form1.listCustomer
+            If student.GetEventDate().Date = selectedDateEventDate.Date Then
+                MessageBox.Show("The event date is already taken by another student. Please select a different date.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End If
+            If student.GetName() = TextBox1.Text AndAlso student.GetPass() = TextBox2.Text Then
+                MessageBox.Show("A user with the same name and password already exists. Please use different credentials.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+                Return
+            End If
+        Next
+        Dim paymentAmount As String = InputBox("Price is: " & totalPrice, "Payment")
+
+
+        If Not String.IsNullOrWhiteSpace(paymentAmount) AndAlso IsNumeric(paymentAmount) Then
+            Dim amount As Decimal = Decimal.Parse(paymentAmount)
+            If amount >= totalPrice Then
+                MessageBox.Show("Payment successful! Change: " & (amount - totalPrice).ToString("C"), "Success", MessageBoxButtons.OK, MessageBoxIcon.Information)
+
+
+                Dim newCustomer As New Form1.Customer
+                newCustomer.SetUserCredentials(TextBox1.Text, TextBox2.Text)
+                newCustomer.SetInfo(TextBox3.Text, ComboBox1.Text, TextBox5.Text)
+                newCustomer.SetEventInfo(ComboBox2.Text, TextBox4.Text)
+                newCustomer.SetBirthDate(selectedDateBday)
+                newCustomer.SetEventDate(selectedDateEventDate)
+                newCustomer.SetServices(selectedServices)
+
+                Form1.listCustomer.Add(newCustomer)
+                TextBox1.Clear()
+                TextBox2.Clear()
+                TextBox3.Clear()
+                TextBox4.Clear()
+                ComboBox1.SelectedIndex = -1
+                TextBox5.Clear()
+                DateTimePicker1.Value = DateTime.Now
+                DateTimePicker2.Value = DateTime.Now
+                Me.Close()
+            Else
+                MessageBox.Show("Insufficient Payment. Please pay at least: " & totalPrice.ToString("C"), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+            End If
+
+        Else
+            MessageBox.Show("Invalid payment amount entered.", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error)
+        End If
+    End Sub
+
+    Private Sub Button2_Click(sender As Object, e As EventArgs) Handles Button2.Click
+        Me.Close()
+    End Sub
+
+
+End Class
